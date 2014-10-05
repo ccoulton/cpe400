@@ -142,18 +142,19 @@ STAT stopnwait(int numPckts, double FailRate){
 //assuming each pckt takes 5ms to send so I can take off the approperate amount
 STAT GoBackN(int numPckts, double FailRate, int Windowsize){
 	reciever tester(Windowsize);
-	PCKT input[Windowsize];
+	PCKT input;
 	//PCKT *out;
 	int totaltime, retransmission, squencenum, numACK = 0;
 	while (numACK <numPckts){
-		//cout<<"GBN while"<<endl;
 		for (int index=0; index< Windowsize; index++){
-			//cout<<"GBN for"<<endl;
-			input[index].failure = FailRate;
-			input[index].squenceNUM = squencenum + index;
-			input[index] = tester.SNWgetPCKT(input[index]);
-			if (input[index].ACK == true){ //pckt ACK
-				totaltime += input[index].RTT - 5*index;
+			input.failure = FailRate;
+			input.squenceNUM = squencenum + index;
+			if (input.squenceNUM > numPckts){
+			    input.squenceNUM = numPckts;
+			    }
+			input = tester.SNWgetPCKT(input);
+			if (input.ACK == true){ //pckt ACK
+				totaltime += input.RTT - 5*index;
 				squencenum++;
 				numACK++;
 				}
